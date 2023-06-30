@@ -1,0 +1,2 @@
+<?php
+// handles redirecting modules
