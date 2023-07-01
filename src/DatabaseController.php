@@ -6,8 +6,6 @@ require '../Configuration.php';
 
 class DatabaseController
 {
-    public const DATABASE_NAME = 'in_lenses';
-    public const URL_BINDING_TABLE = 'url_map';
     private ?mysqli $connection = null;
 
     public function __construct(?mysqli $connection = null)
@@ -29,7 +27,7 @@ class DatabaseController
     {
         try {
             if ( !$this->connection->query($query) )
-                throw new InvalidSQLQuery("Could NOT perform the query = \"$query\" on the database.");
+                throw new InvalidSQLQuery("DatabaseController could NOT perform the query = \"$query\" on the database.");
             return true;
         } catch (Exception $e){
             Logger::report(LogLevel::Error, $e->getMessage());
@@ -41,7 +39,7 @@ class DatabaseController
     {
         try {
             if ( !($result = $this->connection->query($query)) )
-                throw new InvalidSQLQuery("Could NOT perform the query = \"$query\" on the database.");
+                throw new InvalidSQLQuery("DatabaseController could NOT perform the query = \"$query\" on the database.");
             return $result->num_rows;
         } catch(InvalidSQLQuery $e) {
             Logger::report(LogLevel::Error, $e->getMessage());
@@ -57,7 +55,7 @@ class DatabaseController
         try {
 
             if ( !($result = $this->connection->query($query)) )
-                throw new InvalidSQLQuery("Could NOT perform the query = \"$query\" on the database.");
+                throw new InvalidSQLQuery("DatabaseController could NOT perform the query = \"$query\" on the database.");
 
             return $result->fetch_all(MYSQLI_ASSOC);
 
