@@ -1,4 +1,7 @@
 <?php
+
+use PSpell\Config;
+
 require 'Article.php';
 require 'Logger.php';
 require 'Authorship.php';
@@ -28,6 +31,7 @@ class Article extends WebLocation {
             coverPhotoURL = '{$this->coverPhotoURL}';
         ";
 
+        $table = Configuration::DATABASE_TABLE_TAGS;
         foreach ($this->tags as $tag)
             $sqlQueries[] = "
                 INSERT INTO $table (article_id, tag) 
@@ -36,8 +40,15 @@ class Article extends WebLocation {
                 (SELECT {$this->id}, '$tag' FROM $table WHERE article_id = {$this->id} AND tag = '$tag');
             ";
 
-        $sqlQueries[] = "";
-        //  TODO: Update authorships tables as well
+        $table = Configuration::DATABASE_TABLE_AUTHORSHIPS;
+        foreach ($this->authorships as $authorship)
+        $sqlQueries[] = "
+            INSERT INTO $table (article_id, person_id) 
+            SELECT {$this->id}, {$authorship->author->id} FROM DUAL
+            WHERE NOT EXISTS 
+            (SELECT {$this->id}, $authorship->author->id FROM $table 
+            WHERE article_id = {$this->id} AND person_id = {$authorship->author->id});
+            ";
         
         return $sqlQueries;
     }

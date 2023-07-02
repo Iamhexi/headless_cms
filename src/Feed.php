@@ -28,11 +28,14 @@ class Feed {
     }
 
     private function saveChangesToDatabases(): bool {
-        // TODO: implement
-        $this->db;
-
-
-        return false;
+        foreach ($this->articles as $article) {
+            $queries = $article->generateSQLUpdateQueries();
+            foreach ($queries as $query)
+                if ($this->db->sendQuery($query) === false)
+                    return false;
+                // It's the good idea to bundled these modifications in a transaction and use the transaction to apply the changed.
+        }
+        return true;
     }
 
 }
