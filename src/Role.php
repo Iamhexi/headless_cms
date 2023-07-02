@@ -19,4 +19,8 @@ class Role {
     public function removePermission(Permission $permission): void {
         unset($this->permissions[$permission->id]);
     }
+
+    public function __destruct() {
+        // TODO: save changes to the db
+    }
 }
