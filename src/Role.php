@@ -1,5 +1,5 @@
 <?php
-require 'Permission.php';
+require_once 'Permission.php';
 
 class Role {
     public function __construct(

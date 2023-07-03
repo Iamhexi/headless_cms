@@ -1,7 +1,7 @@
 <?php
 
 abstract class WebLocation {
-        public int $id;
+        public ?int $id;
         protected string $title;
         protected int $lastModificationTime;
         protected string $content;

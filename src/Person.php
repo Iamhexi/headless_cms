@@ -1,5 +1,5 @@
 <?php
-require 'Role.php';
+require_once 'Role.php';
 
 class Person {
     public function __construct(

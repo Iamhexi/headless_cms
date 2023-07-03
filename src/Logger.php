@@ -3,8 +3,10 @@
 class Logger {
     public static function report(LogLevel $level, string $message): void {
         $dateTime = new DateTime();
-        $dateTime = $dateTime->format('D.m.Y H:i:s');
+        $dateTime = $dateTime->format('H:i:s d.m.Y');
         echo "[{$level->toString()}, $dateTime]: {$message}"; // TODO: store in database [or a file if the db fails] instead of printing
+        if ($level == LogLevel::CriticalError)
+            exit();
     }
 }
 
@@ -20,8 +22,8 @@ enum LogLevel {
             LogLevel::DebugInfo => 'Debug information',
             LogLevel::Info => 'Information',
             LogLevel::Warning => 'Warning',
-            LogLevel::DebugInfo => 'Error',
-            LogLevel::DebugInfo => 'Critical error'
+            LogLevel::Error => 'Error',
+            LogLevel::CriticalError => 'Critical error'
         };
     }
 }

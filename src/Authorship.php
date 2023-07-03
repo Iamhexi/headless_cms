@@ -1,6 +1,6 @@
 <?php
-require 'Article.php';
-require 'Person.php';
+require_once 'Article.php';
+require_once 'Person.php';
 
 
 class Authorship {

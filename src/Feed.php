@@ -1,19 +1,20 @@
 <?php
-require 'DatabaseController.php';
-require 'Article.php';
-require 'Configuration.php';
+require_once 'DatabaseController.php';
+require_once 'Article.php';
+require_once '../../Configuration.php';
 
 class Feed {
     private DatabaseController $db;
     private array $articles = [];
 
     public function __construct() {
+        $this->db = new DatabaseController();
         $this->loadArticles();
     }
 
     private function loadArticles(): void {
         $table = Configuration::DATABASE_TABLE_ARTICLES;
-        $sql = "SELECT serialized_object FROM $table;";
+        $sql = "SELECT id, serialized_object FROM $table;";
         $rows = $this->db->getArrayOfRecords($sql);
         foreach($rows as $row)
             $this->articles[$row['id']] = unserialize($row['serialized_object']);
@@ -32,7 +33,7 @@ class Feed {
             unset($this->articles[$id]);
             return true;
         } else {
-            Logger::report(LogLevel::Error , 'The feed could remove an article to the database.');
+            Logger::report(LogLevel::Error , 'The feed could not remove an article from the database.');
             return false;
         }
     }
@@ -40,7 +41,7 @@ class Feed {
     public function addArticle(Article $article): bool {
         $table = Configuration::DATABASE_TABLE_ARTICLES;
         $serializedObject = serialize($article);
-        $sql = "INSERT INTO $table (id, serialized_object) VALUES (NULL, $serializedObject);"; // auto increment id
+        $sql = "INSERT INTO $table (id, serialized_object) VALUES (NULL, '$serializedObject');"; // auto increment id
         if ($this->db->sendQuery($sql)) {
             $this->articles[] = $article; // this new article doesn't have id, after retrieving it from the database it will be assigned
             return true;

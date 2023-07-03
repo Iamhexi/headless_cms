@@ -1,5 +1,5 @@
 <?php
-require 'DatabaseController.php';
+require_once 'DatabaseController.php';
 
 class AccessControlPolicy {
     public static function isAllowed(Person $person, PermissionType $action, WebLocation $onObject): bool {

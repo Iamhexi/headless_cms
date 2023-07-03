@@ -1,7 +1,7 @@
 <?php
-require 'Logger.php';
-require 'InvalidSQLQuery.php';
-require '../Configuration.php';
+require_once 'Logger.php';
+require_once 'InvalidSQLQuery.php';
+require_once '../../Configuration.php';
 
 
 class DatabaseController
@@ -10,17 +10,21 @@ class DatabaseController
 
     public function __construct(?mysqli $connection = null)
     {
-        if ($connection !== null)
+        try {
+            if ($connection !== null)
             $this->connection = $connection;
         else
             $this->connection = new mysqli(
                 Configuration::DATABASE_SERVER,
                 Configuration::DATABASE_USER,
                 Configuration::DATABASE_PASSWORD,
-                Configuration::DATABASE_NAME,
+                Configuration::DATABASE_NAME
             );
 
-        $this->connection->set_charset('utf8');
+            $this->connection->set_charset('utf8');
+        } catch(Exception $e) {
+            Logger::report(LogLevel::CriticalError, $e->getMessage());
+        }
     }
 
     public function sendQuery(?string $query): bool
@@ -53,7 +57,6 @@ class DatabaseController
     public function getArrayOfRecords(string $query): array
     {
         try {
-
             if ( !($result = $this->connection->query($query)) )
                 throw new InvalidSQLQuery("DatabaseController could NOT perform the query = \"$query\" on the database.");
 
