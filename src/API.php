@@ -15,7 +15,9 @@ class API {
     }
 
     public function removeArticle(): void { 
-        $id = $_POST['id'];
+        $input = (array) json_decode(file_get_contents('php://input'), true);
+        $id = @$input['id'];
+
         if (isset($id) && !empty($id))
             if ($this->feed->removeArticle($id)) {
                 $this->sendResponse(200, 'Success', 'The article has been successfully removed.');
@@ -44,6 +46,10 @@ class API {
 
     }
 
+    public function reportUnrecognizedEndpoint(): void {
+        $this->sendResponse(405, 'Failure', 'An unrecognized endpoint has been requested. Check if the method and the URL are both valid.');
+    }
+
     private function sendResponse(int $code, string $message, $data): void
     {
         // Set headers to allow cross-origin requests
@@ -63,10 +69,12 @@ class API {
         $response['code'] = $code;
         $response['message'] = $message;
         $response['data'] = $data;
+        http_response_code($code);
 
+        
         if ($this->answered === false)
             echo json_encode($response);
-
+        
         $this->answered = true;
     }
 }
