@@ -17,5 +17,5 @@ class Configuration {
     public const DATABASE_TABLE_AUTHORSHIPS = 'authorships';
     public const DATABASE_TABLE_TAGS = 'tags';
 
-
+    public const ACCESS_CONTROL_ALLOW_ORIGIN = '*';
 }
