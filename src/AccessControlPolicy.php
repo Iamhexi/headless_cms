@@ -3,7 +3,7 @@ require 'DatabaseController.php';
 
 class AccessControlPolicy {
     public static function isAllowed(Person $person, PermissionType $action, WebLocation $onObject): bool {
-        if (self::hasPersonalAccess($person, $action, $onObject) || self::hasRoleAccess($person->role, $action, $onObject))
+        if (self::hasPersonalAccess($person, $action, $onObject) || self::hasRoleAccess($person, $action, $onObject))
             return true;
         return false;
     }
@@ -29,7 +29,31 @@ class AccessControlPolicy {
         return false;
     }
 
-    public static function hasRoleAccess(Role $role, PermissionType $action, WebLocation $onObject): bool {
+    public static function hasRoleAccess(Person $person, PermissionType $action, WebLocation $onObject): bool {
+        $db = new DatabaseController();
+
+        $table = Configuration::DATABASE_TABLE_ROLE_PERMISSIONS;
+        $sql = "SELECT serialized_object FROM $table;";
+        $rows = $db->getArrayOfRecords($sql);
+
+        $locationType = ($onObject instanceof Article) ? PermissionObject::Article : PermissionObject::Page;
+        $role = $person->role;
         
+        foreach($rows as $row) {
+            $permission = unserialize($row['serialized_object']);
+            if ($permission->role === $role &&
+                $permission->permission->type === $action &&
+                $permission->permission->object === $locationType &&
+                (
+                    $permission->permission->specifier === PermissionSpecifier::All || 
+                    (
+                        $permission->permission->specifier === PermissionSpecifier::TheirOwn &&
+                        $onObject->isAuthoredBy($person)
+                    )
+                )   
+            )
+                return true;
+        }
+        return false;
     }
 }

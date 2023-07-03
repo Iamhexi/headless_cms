@@ -21,35 +21,10 @@ class Article extends WebLocation {
         $this->authorships->attach($authorship);
     }
 
-    public function generateSQLUpdateQueries(): array /* of strings */  {
-        $table = Configuration::DATABASE_TABLE_ARTICLES;
-        $sqlQueries[] = "UPDATE $table SET
-            id = {$this->id},
-            title = '{$this->title}',
-            lastModificationTime = {$this->lastModificationTime},
-            content = '{$this->content}',
-            coverPhotoURL = '{$this->coverPhotoURL}';
-        ";
-
-        $table = Configuration::DATABASE_TABLE_TAGS;
-        foreach ($this->tags as $tag)
-            $sqlQueries[] = "
-                INSERT INTO $table (article_id, tag) 
-                SELECT {$this->id}, '$tag' FROM DUAL
-                WHERE NOT EXISTS 
-                (SELECT {$this->id}, '$tag' FROM $table WHERE article_id = {$this->id} AND tag = '$tag');
-            ";
-
-        $table = Configuration::DATABASE_TABLE_AUTHORSHIPS;
-        foreach ($this->authorships as $authorship)
-        $sqlQueries[] = "
-            INSERT INTO $table (article_id, person_id) 
-            SELECT {$this->id}, {$authorship->author->id} FROM DUAL
-            WHERE NOT EXISTS 
-            (SELECT {$this->id}, $authorship->author->id FROM $table 
-            WHERE article_id = {$this->id} AND person_id = {$authorship->author->id});
-            ";
-        
-        return $sqlQueries;
+    public function isAuthoredBy(Person $person): bool {
+        foreach($this->authorships as $authorship) // spl contains() methods doesn't work here as it checks refereces
+            if ($authorship->person === $person)
+                return true;
+        return false;
     }
 }

@@ -12,4 +12,6 @@ abstract class WebLocation {
         $url = implode('_', $url);
         return urlencode($url);
     }
+
+    public abstract function isAuthoredBy(Person $person): bool;
 }
