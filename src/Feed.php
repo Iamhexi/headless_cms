@@ -56,6 +56,45 @@ class Feed {
         }
     }
 
+    public function updateArticle(Article $article): bool {
+        try {
+            if ($article->id === null)
+                throw new Exception('No id has been provided, thus, an article cannot be updated.');
+            if (!array_key_exists($article->id, $this->articles))
+                throw new Exception('An article with the given id does not exist in the local copy of the Feed.');
+
+            $this->updateArticleLocally($article);
+
+            if (!$this->pushChangedArticleToDatabase($article->id))
+                throw new Exception('The feed cannot update the article in the database.');
+
+            return true;
+        } catch (Exception $e) {
+            Logger::report(LogLevel::Warning, $e->getMessage());
+            return false;
+        }
+    }
+
+    private function updateArticleLocally(Article $article): void {
+        foreach($article as $key => $value) // Iterate over all the object's properties and update all the non-null values.
+        if ($value != null)
+            $this->articles[$article->id]->$key = $value;
+    }
+
+    private function pushChangedArticleToDatabase(int $articleId): bool {
+
+        $serializedObject = serialize($this->articles[$articleId]);
+        $table = Configuration::DATABASE_TABLE_ARTICLES;
+        $sql = "UPDATE $table SET serialized_object = '$serializedObject' where id = $articleId;";
+
+        if ($this->db->sendQuery($sql)) {
+            return true;
+        } else {
+            Logger::report(LogLevel::Error , 'The feed could not update an article from the database.');
+            return false;
+        }
+    }
+
     public function addArticle(Article $article): bool {
         $table = Configuration::DATABASE_TABLE_ARTICLES;
         $serializedObject = serialize($article);

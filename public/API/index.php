@@ -1,19 +1,21 @@
 <?php
 require_once '../../src/API.php';
 // handles redirecting modules
-@$action = $_GET['action'];
 $api = new API();
 
-switch($action) {
-    case 'add':
+switch($_SERVER['REQUEST_METHOD']) {
+    case 'POST':
         $api->addArticle();
         break;
 
-    case 'remove':
+    case 'DELETE':
         $api->removeArticle();
         break;
 
-    case 'get':
+    case 'PUT':
+        $api->updateArticle();
+
+    case 'GET':
         $api->getArticles();
         break;
     

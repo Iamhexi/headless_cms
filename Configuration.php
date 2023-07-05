@@ -1,6 +1,7 @@
 <?php
 
 class Configuration {
+    public const DEBUG_MODE = true;
     public const DEFAULT_NUMBER_OF_ARTICLES_TO_RETRIEVE_FROM_FEED = 5;
 
     public const DATABASE_SERVER = 'localhost';

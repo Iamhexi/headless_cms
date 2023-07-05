@@ -2,9 +2,9 @@
 
 abstract class WebLocation {
         public ?int $id;
-        protected string $title;
+        protected ?string $title;
         protected int $lastModificationTime;
-        protected string $content;
+        protected ?string $content;
 
     public function getArticleUrl(): string {
         $url = mb_strtolower($this->title);
