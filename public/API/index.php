@@ -1,25 +1,25 @@
 <?php
-require_once '../../src/API.php';
+require_once '../../src/FeedEndpoint.php';
 // handles redirecting modules
-$api = new API();
+$feedEndpoint = new FeedEndpoint();
 
 switch($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-        $api->addArticle();
+        $feedEndpoint->addArticle();
         break;
 
     case 'DELETE':
-        $api->removeArticle();
+        $feedEndpoint->removeArticle();
         break;
 
     case 'PUT':
-        $api->updateArticle();
+        $feedEndpoint->updateArticle();
 
     case 'GET':
-        $api->getArticles();
+        $feedEndpoint->getArticles();
         break;
     
     default:
-        $api->reportUnrecognizedEndpoint();
+        $feedEndpoint->reportUnrecognizedEndpoint();
         break;
 }

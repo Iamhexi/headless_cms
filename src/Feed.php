@@ -44,6 +44,10 @@ class Feed {
         return array_slice(array: $this->articles, offset: -$howMany,  preserve_keys: true);
     }
 
+    public function getArticleById(int $id): ?Article {
+        return $this->articles[$id];
+    }
+
     public function removeArticle(int $id): bool {
         $table = Configuration::DATABASE_TABLE_ARTICLES;
         $sql = "DELETE FROM $table where id = $id;";
