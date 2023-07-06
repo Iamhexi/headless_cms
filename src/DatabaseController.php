@@ -1,7 +1,7 @@
 <?php
 require_once 'Logger.php';
 require_once 'InvalidSQLQuery.php';
-require_once '../../Configuration.php';
+require_once '../../../Configuration.php';
 
 
 class DatabaseController

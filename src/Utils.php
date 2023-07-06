@@ -11,4 +11,8 @@ class Utils {
             }
         return true;
     }
+
+    public static function getJSONInputAsArray(): array {
+        return (array) json_decode(file_get_contents('php://input'), true);
+    }
 }

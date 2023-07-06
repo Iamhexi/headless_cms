@@ -1,8 +1,11 @@
 <?php
 require_once 'FeedEndpoint.php';
+require_once 'AuthenticationEndpoint.php';
+
 
 class API {
     use FeedEndpoint;
+    use AuthenticationEndpoint;
     
     private bool $answered = false;
     

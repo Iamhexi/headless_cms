@@ -10,7 +10,7 @@ class AccessControlPolicy {
 
     public static function hasPersonalAccess(Person $person, PermissionType $action, WebLocation $onObject): bool {
         $table = Configuration::DATABASE_TABLE_PERSONAL_ACCESS_RIGHTS;
-        $sql = "SELECT serialized_object FROM $table;";
+        $sql = "SELECT person_id, serialized_object FROM $table WHERE person_id = {$person->id};";
         $db = new DatabaseController();
         $rows = $db->getArrayOfRecords($sql);
 
@@ -19,7 +19,6 @@ class AccessControlPolicy {
         foreach($rows as $row) {
             $personalRight = unserialize($row['serialized_object']);
             if (
-                $personalRight->person->id === $person->id &&
                 $personalRight->permission->type === $action &&
                 $personalRight->permission->object === $locationType
             ) {

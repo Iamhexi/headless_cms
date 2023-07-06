@@ -1,7 +1,7 @@
 <?php
 require_once 'Token.php';
 require_once 'DatabaseController.php';
-require_once '../../Configuration.php';
+require_once '../../../Configuration.php';
 
 class PersonalAccessToken implements Token {
     private DatabaseController $db;
@@ -16,6 +16,10 @@ class PersonalAccessToken implements Token {
         return $this->owner;
     }
 
+    public function isValid(): bool {
+        return $this->owner !== null;
+    }
+
     public function __construct(string $token) {
         $this->db = new DatabaseController();
         $this->token = $token;
@@ -23,7 +27,7 @@ class PersonalAccessToken implements Token {
     }
 
     private function getPersonByToken(): ?Person {
-        $hashedToken = password_hash($this->token, PASSWORD_DEFAULT);
+        $hashedToken = password_hash($this->token, Configuration::PHP_TOKEN_HASHING_ALGORITHM);
         $table = Configuration::DATABASE_TABLE_PEOPLE;
 
         $sql = "SELECT id, first_name, last_name, serialized_role, hashed_personal_access_token FROM $table where hashed_personal_access_token = '$hashedToken';";
@@ -38,7 +42,7 @@ class PersonalAccessToken implements Token {
             $row['last_name'],
             unserialize('serialized_role'),
             $hashedToken,
-            time()
+            new DateTime('@'. (string) $row['last_active_time'])
         );
     }
 }

@@ -1,7 +1,7 @@
 <?php
 require_once 'DatabaseController.php';
 require_once 'Article.php';
-require_once '../../Configuration.php';
+require_once '../../../Configuration.php';
 
 class Feed {
     private DatabaseController $db;

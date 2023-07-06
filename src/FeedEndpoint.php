@@ -26,11 +26,12 @@ trait FeedEndpoint {
 
         @$personId = $input['person_id'];
         
-        $person = new Person();
+        $person = Person::getPersonById($personId);
         $permissionType = PermissionType::Update;
         $updatedArticle = $this->feed->getArticleById($id);
 
-        if (AccessControlPolicy::isAllowed($person, $permissionType, $updatedArticle))
+        if (!AccessControlPolicy::isAllowed($person, $permissionType, $updatedArticle))
+            $this->sendResponse(403, 'Access forbidden', 'The owner of the provided token has no right to complete this action.');
         
         if (!Utils::initialized($title) && !Utils::initialized($content) && !Utils::initialized($coverPhotoURL) )  { 
             $this->sendResponse(400, 'Failure', 'No data has been provided to update the requested article.');
