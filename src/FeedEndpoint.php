@@ -15,7 +15,7 @@ trait FeedEndpoint {
     }
 
     public function updateArticle(): void {
-        $input = (array) json_decode(file_get_contents('php://input'), true);
+        $input = Utils::getJSONInputAsArray();
         
         @$id = $input['id'];
         @$title = $input['title'];
@@ -48,7 +48,7 @@ trait FeedEndpoint {
     }
 
     public function removeArticle(): void { 
-        $input = (array) json_decode(file_get_contents('php://input'), true);
+        $input = Utils::getJSONInputAsArray();
         $id = @$input['id'];
 
         if (isset($id) && !empty($id))
@@ -60,8 +60,7 @@ trait FeedEndpoint {
     }
 
     public function addArticle(): void {
-        $input = (array) json_decode(file_get_contents('php://input'), true);
-
+        $input = Utils::getJSONInputAsArray();
         @$title = $input['title'];
         @$content = $input['content'];
         @$coverPhotoURL = $input['coverPhotoURL'];

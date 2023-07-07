@@ -13,6 +13,10 @@ class API {
         $this->sendResponse(405, 'Failure', 'An unrecognized endpoint has been requested. Check if the method and the URL are both valid.');
     }
 
+    public function reportFailedAuthentication(): void {
+        $this->sendResponse(401, 'Authentication failed', 'The provided Temporary Access Token is incorrect. Try with the different one.');
+    }
+
     private function sendResponse(int $code, string $message, $data): void
     {
         // Set headers to allow cross-origin requests

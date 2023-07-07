@@ -20,10 +20,6 @@ class TemporaryAccessToken implements Token {
         return $this->token;
     }
 
-    public function isValid(): bool {
-        return time() < $this->expireTime->getTimestamp();
-    }
-
     private function storeTokenInDatabase(int $personId): bool {
         
         $table = Configuration::DATABASE_TABLE_TEMPORARY_ACCESS_TOKENS;

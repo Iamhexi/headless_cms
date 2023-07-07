@@ -8,18 +8,17 @@ require_once '../../../Configuration.php';
 class Authenticator {
 
     public static function generateTemporaryAccessToken(PersonalAccessToken $token): ?TemporaryAccessToken {
-        if (!$token->isValid())
+        if (!$token->hasOwner())
             return null;
         return new TemporaryAccessToken($token->getOwner()->id ?? -1);
     }
 
     // Checks if the given token exists in the database. Returns the identity of the owner if so. Otherwise, returns false.
-    public static function authenticate(?TemporaryAccessToken $token): Person|false {
-        if ($token === null)
+    public static function authenticate(TemporaryAccessToken|string|null $token): Person|false {
+        if ($token === null) {
+            Logger::report(LogLevel::Info, "An attempt to authenticate without any token has been detected!");
             return false;
-
-        if (!$token->isValid())
-            return false;
+        }
 
         $person = self::getPersonAssocicatedWithTemporaryTokenFromDatabase($token);
         if ($person === null)
@@ -29,12 +28,16 @@ class Authenticator {
         return $person;
     }
 
-    private static function getPersonAssocicatedWithTemporaryTokenFromDatabase(TemporaryAccessToken $token): ?Person {
+    private static function getPersonAssocicatedWithTemporaryTokenFromDatabase(TemporaryAccessToken|string $token): ?Person {
         $peopleTable = Configuration::DATABASE_TABLE_PEOPLE;
         $tempTokenTable = Configuration::DATABASE_TABLE_TEMPORARY_ACCESS_TOKENS;
+
+        if ($token instanceof TemporaryAccessToken)
+            $token = $token->getToken();
+
         $sql = "SELECT p.id, p.first_name, p.last_name, p.serialized_role, t.expire_time, p.hashed_personal_access_token, last_active_time  
                 FROM $peopleTable p INNER JOIN $tempTokenTable t ON t.person_id = p.id
-                WHERE t.token = '{$token->getToken()}'
+                WHERE t.token = '$token' AND t.expire_time > UNIX_TIMESTAMP(now());
                 ";
 
             $db = new DatabaseController();

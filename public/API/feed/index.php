@@ -1,19 +1,32 @@
 <?php
 require_once '../../../src/API.php';
+require_once '../../../src/Authenticator.php';
 // handles redirecting modules
 $api = new API();
 
+$token = @$_GET['token'];
+
 switch($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-        $api->addArticle();
+        if ($person = Authenticator::authenticate($token))
+            $api->addArticle();
+        else
+            $api->reportFailedAuthentication();
         break;
 
     case 'DELETE':
-        $api->removeArticle();
+        if ($person = Authenticator::authenticate($token))
+            $api->removeArticle();
+        else
+            $api->reportFailedAuthentication();
         break;
 
     case 'PUT':
-        $api->updateArticle();
+        if ($person = Authenticator::authenticate($token))
+            $api->updateArticle();
+        else
+            $api->reportFailedAuthentication();
+        break;
 
     case 'GET':
         $api->getArticles();

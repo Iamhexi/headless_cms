@@ -5,7 +5,7 @@ require_once '../../../Configuration.php';
 
 class PersonalAccessToken implements Token {
     private DatabaseController $db;
-    private string $token = '';
+    private ?string $token = '';
     private ?Person $owner = null;
 
     public function getToken(): string {
@@ -16,13 +16,13 @@ class PersonalAccessToken implements Token {
         return $this->owner;
     }
 
-    public function isValid(): bool {
+    public function hasOwner(): bool {
         return $this->owner !== null;
     }
 
-    public function __construct(string $token = '') {
+    public function __construct(?string $token = null) {
         $this->db = new DatabaseController();
-        $this->token = $token;
+        $this->token = $token ?? '';
         $this->owner = $this->getPersonByToken();
     }
 
