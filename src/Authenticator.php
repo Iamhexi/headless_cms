@@ -7,12 +7,17 @@ require_once '../../../Configuration.php';
 
 class Authenticator {
 
-    public static function generateTemporaryAccessToken(PersonalAccessToken $token): TemporaryAccessToken {
+    public static function generateTemporaryAccessToken(PersonalAccessToken $token): ?TemporaryAccessToken {
+        if (!$token->isValid())
+            return null;
         return new TemporaryAccessToken($token->getOwner()->id ?? -1);
     }
 
     // Checks if the given token exists in the database. Returns the identity of the owner if so. Otherwise, returns false.
-    public static function authenticate(TemporaryAccessToken $token): Person|false {
+    public static function authenticate(?TemporaryAccessToken $token): Person|false {
+        if ($token === null)
+            return false;
+
         if (!$token->isValid())
             return false;
 
@@ -27,12 +32,12 @@ class Authenticator {
     private static function getPersonAssocicatedWithTemporaryTokenFromDatabase(TemporaryAccessToken $token): ?Person {
         $peopleTable = Configuration::DATABASE_TABLE_PEOPLE;
         $tempTokenTable = Configuration::DATABASE_TABLE_TEMPORARY_ACCESS_TOKENS;
-        $sql = "SELECT p.id, p.first_name, p.last_name, p.serialized_role, t.expire_time, p.hashed_personal_access_token,  
-                FROM $peopleTable p INNER JOIN $tempTokenTable t ON t.person_id = p.id;
+        $sql = "SELECT p.id, p.first_name, p.last_name, p.serialized_role, t.expire_time, p.hashed_personal_access_token, last_active_time  
+                FROM $peopleTable p INNER JOIN $tempTokenTable t ON t.person_id = p.id
                 WHERE t.token = '{$token->getToken()}'
                 ";
-        
-        $db = new DatabaseController();
+
+            $db = new DatabaseController();
         $rows = $db->getArrayOfRecords($sql);
 
         if ($rows === [])
@@ -44,10 +49,12 @@ class Authenticator {
             $row['id'],
             $row['first_name'],
             $row['last_name'],
-            unserialize($row['serialized_role']),
+            /*unserialize($row['serialized_role']),*/ null, // TODO: Handle a serialized role object.
             $row['hashed_personal_access_token'],
             new DateTime('@'. (string) $row['last_active_time'])
         );
+        
+        return $person;
     }
 
     private static function updateLastActiveTime(Person $person): void {

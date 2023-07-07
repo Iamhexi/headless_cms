@@ -20,29 +20,30 @@ class PersonalAccessToken implements Token {
         return $this->owner !== null;
     }
 
-    public function __construct(string $token) {
+    public function __construct(string $token = '') {
         $this->db = new DatabaseController();
         $this->token = $token;
         $this->owner = $this->getPersonByToken();
     }
 
     private function getPersonByToken(): ?Person {
-        $hashedToken = password_hash($this->token, Configuration::PHP_TOKEN_HASHING_ALGORITHM);
         $table = Configuration::DATABASE_TABLE_PEOPLE;
 
-        $sql = "SELECT id, first_name, last_name, serialized_role, hashed_personal_access_token FROM $table where hashed_personal_access_token = '$hashedToken';";
-        $row = $this->db->getArrayOfRecords($sql);
+        $sql = "SELECT id, first_name, last_name, serialized_role, hashed_personal_access_token, last_active_time FROM $table;";
+        $rows = $this->db->getArrayOfRecords($sql);
 
-        if ($row === [])
-            return null;
+        foreach($rows as $row)
+            if (password_verify($this->token, $row['hashed_personal_access_token']))
+                return new Person(
+                    $row['id'],
+                    $row['first_name'],
+                    $row['last_name'],
+                    /* unserialize($row['serialized_role']), */ null, // TODO: handle serialized role object
+                    $row['hashed_personal_access_token'],
+                    new DateTime('@'. (string) $row['last_active_time'])
+                );
+        
+        return null;
             
-        return new Person(
-            $row['id'],
-            $row['first_name'],
-            $row['last_name'],
-            unserialize('serialized_role'),
-            $hashedToken,
-            new DateTime('@'. (string) $row['last_active_time'])
-        );
     }
 }

@@ -8,7 +8,7 @@ class Person {
         public int $id,
         public string $firstName,
         public string $lastName,
-        public Role $role,
+        public ?Role $role = null,
         public string $hashedPersonalAccessToken,
         public DateTime $lastTimeActive
     ) {}
