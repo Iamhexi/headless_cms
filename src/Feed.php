@@ -107,7 +107,6 @@ class Feed {
             $this->articles[] = $article; // this new article doesn't have id, after retrieving it from the database it will be assigned
             
             $num = count($this->articles);
-            echo "TOTAL NUMBER OF ARTICLES {$num}.";
 
             return true;
         } {
