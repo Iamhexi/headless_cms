@@ -15,4 +15,9 @@ class Utils {
     public static function getJSONInputAsArray(): array {
         return (array) json_decode(file_get_contents('php://input'), true);
     }
+
+    public static function getCurrentTimeAsFloat(): float { // It is insensitive to 32-bit integer overflow.
+        $now = new DateTime();
+        return (float) $now->format("U");
+    }
 }

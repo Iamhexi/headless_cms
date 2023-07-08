@@ -62,7 +62,7 @@ class Authenticator {
 
     private static function updateLastActiveTime(Person $person): void {
         $table = Configuration::DATABASE_TABLE_PEOPLE;
-        $now = time();
+        $now = Utils::getCurrentTimeAsFloat();
         $sql = "UPDATE $table SET last_active_time = $now WHERE id = {$person->id};";
         
         $db = new DatabaseController();

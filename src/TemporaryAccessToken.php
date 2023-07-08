@@ -21,15 +21,15 @@ class TemporaryAccessToken implements Token {
     }
 
     private function storeTokenInDatabase(int $personId): bool {
-        
+        $expireTime = (float) $this->expireTime->format("U");
         $table = Configuration::DATABASE_TABLE_TEMPORARY_ACCESS_TOKENS;
-        $sql = "INSERT INTO $table (person_id, token, expire_time) VALUES ($personId, '{$this->token}', {$this->expireTime->getTimestamp()});";
+        $sql = "INSERT INTO $table (person_id, token, expire_time) VALUES ($personId, '{$this->token}', $expireTime);";
+        
         return $this->db->sendQuery($sql);
     }
 
     private function setExpireTime(): void {
-        $seconds = time() + Configuration::API_TEMPORARY_TOKEN_EXPIRE_TIME_IN_SECONDS;
-        $this->expireTime = new DateTime('@' . (string) (time() + $seconds) );
+        $this->expireTime = new DateTime('@' . (string) (Utils::getCurrentTimeAsFloat() + Configuration::API_TEMPORARY_TOKEN_EXPIRE_TIME_IN_SECONDS) );
     }
 
     private function generateRandomToken(): void {

@@ -11,7 +11,7 @@ The headless CMS written in PHP using the MySQL database.
     * POST - exchanges Personal Access Token (aka password) for Temporary Access Token, which is the token required for other endpoints, parameters: token (Personal Access Token).
 
 ## TODO
-- [ ] fix the bug setting the validity of Temporary Access Token to many years instead of minutes
+- [x] fix the bug setting the validity of Temporary Access Token to many years instead of minutes
 - [x] implement Auth endpoint 
 - [x] implement Feed endpoint
 - [ ] implement Page endpoint
