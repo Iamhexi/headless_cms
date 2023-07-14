@@ -33,7 +33,7 @@ class API {
             exit;
         }
 
-        // header('Content-Type: application/json'); // FIXME: this header violates CSP policy and blocks requests
+        header('Content-Type: application/json');
 
         $response['code'] = $code;
         $response['message'] = $message;

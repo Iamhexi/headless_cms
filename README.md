@@ -3,7 +3,7 @@ The headless CMS written in PHP using the MySQL database.
 The CMS uses curl and ssl extensions.
 
 # Endpoints
-The applications implements the following interface:
+The application implements the following interface:
 
 * /API/feed
     * GET - gets the default number of articles. 
