@@ -19,13 +19,13 @@ class Configuration {
     public const DATABASE_NAME = 'headless_cms';
 
     public const DATABASE_TABLE_PEOPLE = 'people'; // id, first_name, last_name, serialized_role, hashed_personal_access_token, last_active_time
-    public const DATABASE_TABLE_ARTICLES = 'articles';
-    public const DATABASE_TABLE_PAGES = 'pages';
-    public const DATABASE_TABLE_PERMISSIONS = 'permissions';
-    public const DATABASE_TABLE_ROLES = 'roles';
-    public const DATABASE_TABLE_ROLE_PERMISSIONS = 'role_permissions'; 
+    public const DATABASE_TABLE_ARTICLES = 'articles'; // id, serialized_object
+    public const DATABASE_TABLE_PAGES = 'pages'; // id, serialized_object
+    public const DATABASE_TABLE_PERMISSIONS = 'permissions'; // combination of all available permissions
+    public const DATABASE_TABLE_ROLES = 'roles'; // serialized_object
+    public const DATABASE_TABLE_ROLE_PERMISSIONS = 'role_permissions'; // meta-table binding permissions with roles
     public const DATABASE_TABLE_PERSONAL_ACCESS_RIGHTS = 'personal_access_rights'; // person_id, serialized_object
-    public const DATABASE_TABLE_AUTHORSHIPS = 'authorships';
+    public const DATABASE_TABLE_AUTHORSHIPS = 'authorships'; // meta-table binding people (articles' authors) and articles
     public const DATABASE_TABLE_TEMPORARY_ACCESS_TOKENS = 'temporary_access_tokens'; // person_id, token, expire_time
-    public const DATABASE_TABLE_TAGS = 'tags';
+    public const DATABASE_TABLE_TAGS = 'tags'; // meta-table binding articles and their tags
 }
